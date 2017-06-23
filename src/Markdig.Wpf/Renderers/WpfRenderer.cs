@@ -178,11 +178,14 @@ namespace Markdig.Renderers
 
         private bool StartsWithSpace(Inline inline)
         {
-            if (inline is Run run)
+            var run = inline as Run;
+            var span = inline as Span;
+
+            if (run != null)
             {
                 return run.Text.Length == 0 || run.Text.First().IsWhitespace();
             }
-            else if (inline is Span span)
+            else if (span != null)
             {
                 return StartsWithSpace(span.Inlines.FirstInline);
             }
@@ -193,12 +196,14 @@ namespace Markdig.Renderers
         private bool EndsWithSpace(IAddChild element)
         {
             var inlines = (element as Span)?.Inlines ?? (element as Paragraph)?.Inlines;
+            var run = inlines?.LastInline as Run;
+            var span = inlines?.LastInline as Span;
 
-            if (inlines?.LastInline is Run run)
+            if (run != null)
             {
                 return run.Text.Length == 0 || run.Text.Last().IsWhitespace();
             }
-            else if (inlines?.LastInline is Span span)
+            else if (span != null)
             {
                 return EndsWithSpace(span);
             }
